@@ -1,0 +1,37 @@
+{% extends 'QtCompetence/base.html' %}
+{% load static %}
+{% load extra_tags %}
+{% block css %}
+<style>
+    .space{
+        margin:8em 20em;
+        text-align: center;
+        border: black solid 1px;
+    }
+    input{
+        margin:0 1em;
+    }
+    p{
+        font-size: 1.3em;
+    }
+</style>
+{% endblock css %}
+{% block content %}
+<div class="space">
+    <form method="post" style="padding: 2em">
+        {% csrf_token %}
+        <p>您确定要删除 "{{ object }}"的信息吗？</p>
+        <input type="submit" class="pure-button pure-button-primary" value="确定">
+        {% if return_type  == 'audit_info' %}
+            <input type=button class="pure-button pure-button-primary"
+                    onclick="javascript: top.location.href='{% url 'QtCompetence:audit_info_list' %}'" value="返回">
+        {% elif return_type  == 'finding_info' %}
+            <input type=button class="pure-button pure-button-primary"
+                    onclick="javascript: top.location.href='{% url 'QtCompetence:finding_info_list' %}'" value="返回">
+        {% else %}
+            <input type=button class="pure-button pure-button-primary"
+                    onclick="javascript: top.location.href='{% url 'QtCompetence:action_info_list' %}'" value="返回">
+        {% endif %}
+    </form>
+</div>
+{% endblock content %}

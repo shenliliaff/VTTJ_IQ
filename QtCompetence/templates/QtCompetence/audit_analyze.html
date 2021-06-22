@@ -1,0 +1,292 @@
+{% extends 'QtCompetence/base.html' %}
+{% load static %}
+{% block content %}
+<div class="content-container">
+    {%csrf_token%}
+    <div class="pure-g">
+        <div class="pure-u-1-2">
+            <label for="{{ selectFindingTime.audit_time.id_for_label }}">{{ selectFindingTime.audit_time.label }}</label>
+            {{ selectFindingTime.audit_time }}
+        </div>
+        <div class="pure-u-1-2">
+
+        </div>
+        <div class="pure-u-1-2" id="container1">
+
+        </div>
+        <div class="pure-u-1-2" id="container2">
+
+        </div>
+        <div class="pure-u-1-2" id="container3">
+
+        </div>
+        <div class="pure-u-1-2" id="container4">
+
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block js %}
+<script type="text/javascript" src="{% static 'QtCompetence/js/jquery-1.9.1.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'QtCompetence/js/highcharts.js' %}"></script>
+<script type="text/javascript" src="{% static 'QtCompetence/js/exporting.js' %}"></script>
+<script type="text/javascript" src="{% static 'QtCompetence/js/export-data.js' %}"></script>
+<script type="text/javascript" src="{% static 'QtCompetence/js/accessibility.js' %}"></script>
+<script>
+    $(function () {
+        $("select#id_audit_time").change(function () {
+            time = ($(this).val()).split('-');
+            $.ajax({
+                url: "{% url 'QtCompetence:audit_analyze' %}",
+                type: "POST",
+                data: {
+                    "year": time[0],
+                    "month": time[1],
+                    "csrfmiddlewaretoken": $("[name = 'csrfmiddlewaretoken']").val(),
+                },
+                success: function (result) {
+                    feedbackInfo = result.feedbackInfo;
+                    feedbackInfo1 = feedbackInfo[0];
+                    feedbackInfo2 = feedbackInfo[1];
+                    feedbackInfo3 = feedbackInfo[2];
+                    feedbackInfo4 = feedbackInfo[3];
+                    feedbackInfo5 = feedbackInfo[4];
+                    feedbackInfo6 = feedbackInfo[5];
+                    feedbackTime = feedbackInfo[6];
+                    Highcharts.chart('container1', {
+                        chart: {
+                            zoomType: 'xy'
+                        },
+                        title: {
+                            text: 'Conforming Ratio'
+                        },
+                        subtitle: {
+                            text: 'Scope: Including External Audits & Internal Audits'
+                        },
+                        xAxis: [{
+                            categories: feedbackTime,
+                            crosshair: true
+                        }],
+                        yAxis: [{ // Primary yAxis
+                            labels: {
+                                format: '{value}件',
+                                style: {
+                                    color: Highcharts.getOptions().colors[1]
+                                }
+                            },
+                            title: {
+                                text: 'Quantities',
+                                style: {
+                                    color: Highcharts.getOptions().colors[1]
+                                }
+                            }
+                        }, { // Secondary yAxis
+                            title: {
+                                text: 'Percents',
+                                style: {
+                                    color: Highcharts.getOptions().colors[0]
+                                }
+                            },
+                            labels: {
+                                format: '{value} %',
+                                style: {
+                                    color: Highcharts.getOptions().colors[0]
+                                }
+                            },
+                            opposite: true
+                        }],
+                        tooltip: {
+                            shared: true
+                        },
+                        legend: {
+                            layout: 'vertical',
+                            align: 'left',
+                            x: 120,
+                            verticalAlign: 'top',
+                            y: 100,
+                            floating: true,
+                            backgroundColor:
+                                Highcharts.defaultOptions.legend.backgroundColor || // theme
+                                'rgba(255,255,255,0.25)'
+                        },
+                        series: [{
+                            name: 'Non-conforming Quantities',
+                            type: 'column',
+                            data: feedbackInfo3,
+                            tooltip: {
+                                valueSuffix: ' 件'
+                            }
+
+                        }, {
+                            name: 'confgorming Ratio',
+                            type: 'spline',
+                            yAxis: 1,
+                            data: feedbackInfo1,
+                            tooltip: {
+                                valueSuffix: '%'
+                            }
+                        }, {
+                            name: '100% target',
+                            type: 'spline',
+                            yAxis: 1,
+                            data: feedbackInfo5,
+                            tooltip: {
+                                valueSuffix: '%'
+                            }
+                        }]
+                    });
+                    Highcharts.chart('container2', {
+                        chart: {
+                            zoomType: 'xy'
+                        },
+                        title: {
+                            text: 'Recurring Ratio'
+                        },
+                        subtitle: {
+                            text: 'Scope: Including External Audits & Internal Audits'
+                        },
+                        xAxis: [{
+                            categories: feedbackTime,
+                            crosshair: true
+                        }],
+                        yAxis: [{ // Primary yAxis
+                            labels: {
+                                format: '{value}件',
+                                style: {
+                                    color: Highcharts.getOptions().colors[1]
+                                }
+                            },
+                            title: {
+                                text: 'Quantities',
+                                style: {
+                                    color: Highcharts.getOptions().colors[1]
+                                }
+                            }
+                        }, { // Secondary yAxis
+                            title: {
+                                text: 'Percents',
+                                style: {
+                                    color: Highcharts.getOptions().colors[0]
+                                }
+                            },
+                            labels: {
+                                format: '{value} %',
+                                style: {
+                                    color: Highcharts.getOptions().colors[0]
+                                }
+                            },
+                            opposite: true
+                        }],
+                        tooltip: {
+                            shared: true
+                        },
+                        legend: {
+                            layout: 'vertical',
+                            align: 'left',
+                            x: 120,
+                            verticalAlign: 'top',
+                            y: 100,
+                            floating: true,
+                            backgroundColor:
+                                Highcharts.defaultOptions.legend.backgroundColor || // theme
+                                'rgba(255,255,255,0.25)'
+                        },
+                        series: [{
+                            name: 'Recurring>=2 Quantities',
+                            type: 'column',
+                            data: feedbackInfo4,
+                            tooltip: {
+                                valueSuffix: ' 件'
+                            }
+
+                        }, {
+                            name: 'Recurring Ratio',
+                            type: 'spline',
+                            yAxis: 1,
+                            data: feedbackInfo2,
+                            tooltip: {
+                                valueSuffix: '%'
+                            }
+                        }, {
+                            name: '100% target',
+                            type: 'spline',
+                            yAxis: 1,
+                            data: feedbackInfo6,
+                            tooltip: {
+                                valueSuffix: '%'
+                            }
+                        }]
+                    });
+                    $('.highcharts-credits').css('display', 'none');
+                }
+            });
+        });
+
+    });
+</script>
+{% endblock %}
+{% block css %}
+<style>
+    * {
+        text-decoration: none;
+    }
+
+    .content-container {
+        margin: 7% auto 8%;
+        width: 90%;
+        text-align: center;
+    }
+
+    .pure-u-1-2 {
+        padding-bottom: 3%;
+    }
+
+    #container1 {
+        min-width: 500px;
+        height: 500px
+    }
+
+    .highcharts-figure,
+    .highcharts-data-table table {
+        min-width: 360px;
+        max-width: 800px;
+        margin: 1em auto;
+    }
+
+    .highcharts-data-table table {
+        font-family: Verdana, sans-serif;
+        border-collapse: collapse;
+        border: 1px solid #EBEBEB;
+        margin: 10px auto;
+        text-align: center;
+        width: 100%;
+        max-width: 500px;
+    }
+
+    .highcharts-data-table caption {
+        padding: 1em 0;
+        font-size: 1.2em;
+        color: #555;
+    }
+
+    .highcharts-data-table th {
+        font-weight: 600;
+        padding: 0.5em;
+    }
+
+    .highcharts-data-table td,
+    .highcharts-data-table th,
+    .highcharts-data-table caption {
+        padding: 0.5em;
+    }
+
+    .highcharts-data-table thead tr,
+    .highcharts-data-table tr:nth-child(even) {
+        background: #f8f8f8;
+    }
+
+    .highcharts-data-table tr:hover {
+        background: #f1f7ff;
+    }
+</style>
+{% endblock %}

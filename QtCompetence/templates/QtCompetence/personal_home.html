@@ -1,0 +1,267 @@
+{% extends 'QtCompetence/base.html' %}
+{% load static %}
+{% load extra_tags %}
+{% block css %}
+<style>
+    .space{
+        margin:5% auto;
+        width: 95%;
+    }
+    
+    #newspaper-a
+    {
+        font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+        font-size: 12px;
+        margin: 0 auto;
+        text-align: center;
+        border-collapse: collapse;
+        border: 1px solid #69c;
+    }
+    #newspaper-a th
+    {
+        padding: 1% 0;
+        font-weight: normal;
+        font-size: 14px;
+        color: #039;
+        border: 1px dashed #69c;
+    }
+    #newspaper-a td
+    {
+        padding: 1% 0;
+        color: #669;
+        border: 1px dashed #69c;
+    }
+    #newspaper-a tbody tr:hover td
+    {
+        color: #339;
+        background: #d0dafd;
+    }
+    a{
+        text-decoration:none;
+    }
+    $("#newspaper-a").find("td:empty")remove();
+</style>
+{% endblock css %}
+{% block content %}
+    <div class="space pure-g">
+        {%csrf_token%}
+        <div class="pure-u-1-2" style="text-align: center;margin-bottom: 2%;">
+            <label for="{{ selectform.time.id_for_label }}">{{ selectform.time.label }}</label>
+            {{ selectform.time }}
+        </div>
+        <div class="pure-u-1-2">
+
+        </div>
+        <div class="pure-u-1-2" id="container1">
+
+        </div>
+        <div class="pure-u-1-2" id="container2">
+
+        </div>
+        <div class="pure-u-1-2" id="container3">
+
+        </div>
+        <div class="pure-u-1-2" id="container4">
+
+        </div>
+        <div class='pure-u-1' style="text-align: center;margin-top: 2%;">
+        <table id="newspaper-a" summary="Competence Matrix">
+            <thead>
+            <tr>
+                <th scope="col">name</th>
+                <th scope="col">competence Name</th>
+                <th scope="col">self evaluation</th>
+                <th scope="col">self gap</th>
+                <th scope="col">manager evaluation </th>
+                <th scope="col">manager gap</th>
+                <th scope="col">Time</th>
+            </tr>
+            </thead>
+            <tBody>
+            {% for score in manager_feedback %}
+                <tr>
+                    <td> <a href="{% url 'QtCompetence:staff_home' score.user.id %}">{{score.user.employ_name}}</a> </td>
+                    <td> {{score.competence.competence_name|personalHome}} </td>
+                    <td> {{score.self_assessment|personalHome}} </td>
+                    <td> {{score.self_gap|personalHome}} </td>
+                    <td> {{score.manager_assessment|personalHome}} </td>
+                    <td> {{score.manager_gap|personalHome}} </td>
+                    <td> {{score.create_time|date:"Y-m-g" }} </td>
+                </tr>
+            {% endfor %}
+            </tBody>
+        </table>
+        </div>
+    </div> 
+{% endblock %}
+{% block js %}
+    <script type="text/javascript" src="{% static 'QtCompetence/js/highcharts.js' %}"></script>
+    <script type="text/javascript" src="{% static 'QtCompetence/js/exporting.js' %}"></script>
+    <script type="text/javascript" src="{% static 'QtCompetence/js/variable-pie.js' %}"></script>
+    <script>
+        $(function () {
+            $("select#id_time").change(function(){
+                time=($(this).val()).split('-');
+                $.ajax({
+                    url: "{% url 'QtCompetence:personal_home' %}",
+                    type: "POST",
+                    data: {
+                        "year": time[0],
+                        "month":time[1],
+                        "csrfmiddlewaretoken": $("[name = 'csrfmiddlewaretoken']").val(),
+                    },
+                    success: function (result) {
+                        var feedbackInfo=result.feedbackInfo;
+                        var feedbackInfo1=feedbackInfo[0];
+                        var feedbackInfo2=feedbackInfo[1];
+                        var feedbackInfo3=feedbackInfo[2];
+                        var feedbackInfo4=feedbackInfo[3];
+                        var feedbackInfo5=feedbackInfo[4];
+                        Highcharts.chart('container1', {
+                            chart: {
+                                plotBackgroundColor: null,
+                                plotBorderWidth: null,
+                                plotShadow: false,
+                                type: 'pie'
+                            },
+                            title: {
+                                text: feedbackInfo5.year+'年'+ feedbackInfo5.month+'月各项评价规则自评gap值合计'
+                            },
+                            tooltip: {
+                                headerFormat: '',
+                                pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {point.name}<b><br/>' +
+                                'Gap Sum:  <b>{point.y}</b><br/>' +
+                                'Gap Percent: <b>{point.percentage:.1f}%</b><br/>'
+                            },
+                            plotOptions: {
+                                pie: {
+                                    allowPointSelect: true,
+                                    cursor: 'pointer',
+                                    dataLabels: {
+                                        enabled: true,
+                                        format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                                        style: {
+                                            color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                                        }
+                                    }
+                                }
+                            },
+                            series: [{
+                                name: 'Rules',
+                                colorByPoint: true,
+                                data: feedbackInfo1,
+                            }]
+                        });
+                        Highcharts.chart('container2', {
+                            chart: {
+                                plotBackgroundColor: null,
+                                plotBorderWidth: null,
+                                plotShadow: false,
+                                type: 'pie'
+                            },
+                            title: {
+                                text: feedbackInfo5.year+'年'+ feedbackInfo5.month+'月各岗位自评gap值合计'
+                            },
+                            tooltip: {
+                                headerFormat: '',
+                                pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {point.name}<b><br/>' +
+                                'Gap Sum:  <b>{point.y}</b><br/>' +
+                                'Gap Percent: <b>{point.percentage:.1f}%</b><br/>'
+                            },
+                            plotOptions: {
+                                pie: {
+                                    allowPointSelect: true,
+                                    cursor: 'pointer',
+                                    dataLabels: {
+                                        enabled: true,
+                                        format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                                        style: {
+                                            color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                                        }
+                                    }
+                                }
+                            },
+                            series: [{
+                                name: 'Positions',
+                                colorByPoint: true,
+                                data: feedbackInfo2,
+                            }]
+                        });
+                        Highcharts.chart('container3', {
+                            chart: {
+                                plotBackgroundColor: null,
+                                plotBorderWidth: null,
+                                plotShadow: false,
+                                type: 'pie'
+                            },
+                            title: {
+                                text: feedbackInfo5.year+'年'+ feedbackInfo5.month+'月各项评价规则经理评价gap值合计'
+                            },
+                            tooltip: {
+                                headerFormat: '',
+                                pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {point.name}<b><br/>' +
+                                'Gap Sum:  <b>{point.y}</b><br/>' +
+                                'Gap Percent: <b>{point.percentage:.1f}%</b><br/>'
+                            },
+                            plotOptions: {
+                                pie: {
+                                    allowPointSelect: true,
+                                    cursor: 'pointer',
+                                    dataLabels: {
+                                        enabled: true,
+                                        format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                                        style: {
+                                            color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                                        }
+                                    }
+                                }
+                            },
+                            series: [{
+                                name: 'Rules',
+                                colorByPoint: true,
+                                data: feedbackInfo3,
+                            }]
+                        });
+                        Highcharts.chart('container4', {
+                            chart: {
+                                plotBackgroundColor: null,
+                                plotBorderWidth: null,
+                                plotShadow: false,
+                                type: 'pie'
+                            },
+                            title: {
+                                text: feedbackInfo5.year+'年'+ feedbackInfo5.month+'月各岗位经理评价gap值合计'
+                            },
+                            tooltip: {
+                                headerFormat: '',
+                                pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {point.name}<b><br/>' +
+                                'Gap Sum:  <b>{point.y}</b><br/>' +
+                                'Gap Percent: <b>{point.percentage:.1f}%</b><br/>'
+                            },
+                            plotOptions: {
+                                pie: {
+                                    allowPointSelect: true,
+                                    cursor: 'pointer',
+                                    dataLabels: {
+                                        enabled: true,
+                                        format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                                        style: {
+                                            color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                                        }
+                                    }
+                                }
+                            },
+                            series: [{
+                                name: 'Positions',
+                                colorByPoint: true,
+                                data: feedbackInfo4,
+                            }]
+                        });
+                        $('.highcharts-credits').css('display', 'none');
+                    } 
+                });
+            });
+           
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends 'QtCompetence/base.html' %}
+{% load static %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'QtCompetence/css/register_user.css'%}">
+<style>
+    li {
+        text-align:left;
+        padding:0 13%;
+        list-style:none;
+    }
+    .pure-menu-separator{
+        padding:1%;
+    }
+
+    .helptext li{
+        padding:0;
+    }
+
+    .splash{
+        position:unset;
+        margin:7% auto;
+        text-transform:none;
+    }
+    .pure-form input[type=checkbox]{
+        width: auto;
+        margin-bottom: 0; 
+    }
+</style>
+{% endblock css %}
+
+{% block content %}
+<div class="splash">
+    <div class="pure-g pure-menu-horizontal border">
+        <div class="pure-u-1-5">
+             <h2>Login</h2>
+        </div>
+        <div class="pure-u-2-5">
+        </div>
+        <div class="pure-u-2-5">
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item"><a href="{% url 'QtCompetence:contact_us' %}" target="_blank">Contace Us</a></li>
+                <li class="pure-menu-separator"></li>
+                <li class="pure-menu-item"><a href="{% url 'QtCompetence:login_user' %}" class="pure-menu-link">Log in </a></li>
+            </ul>
+        </div>              
+    </div>
+    <div class="frame">
+        <div class="is-left space">
+            <form class="pure-form pure-form-aligned" action="{% url 'QtCompetence:register'%}" method="POST">
+                <fieldset>
+                    {%csrf_token%}
+                    {{ form.as_ul }}
+                    <div class="register">
+                        <button type="submit" name="register" id='registerbtn' class="pure-button pure-button-primary">Sign up</button>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}

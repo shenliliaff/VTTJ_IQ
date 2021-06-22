@@ -1,0 +1,168 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+{% block head %}
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Vitesco Intelligent Quality System</title>
+        <link rel="shortcut icon" href="{% static 'QtCompetence/ico/v.ico' %}">
+        <link rel="stylesheet" href="{% static 'QtCompetence/css/pure-min.css' %}">
+        <link rel="stylesheet" href="{% static 'QtCompetence/css/grids-responsive-min.css' %}">
+        <link rel="stylesheet" href="{% static 'QtCompetence/css/font-awesome.min.css'%}">
+        <link rel="stylesheet" href="{% static 'QtCompetence/css/marketing.css'%}">
+        {% block css %}
+        {% endblock %}
+        <script type="text/javascript" src="{% static 'QtCompetence/js/jquery-1.7.2.min.js' %}"></script>
+    </head>
+{% endblock %}
+<body>
+{% block header %}
+    <div class="header">
+        <div class="home-menu pure-menu pure-menu-horizontal pure-menu-fixed">
+            <a class="pure-menu-heading" href="{% url 'QtCompetence:home' %}">Vitesco Technologies</a>
+
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item"><a href="{% url 'QtCompetence:home' %}" class="pure-menu-link">home</a></li>
+                {% if is_staff %}
+                    <li class="pure-menu-item"><a href="{% url 'QtCompetence:competence_judge' %}" class="pure-menu-link">competence</a></li>
+                    <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+                        <a href="{% url 'QtCompetence:audit_home' %}" id="menuLink1" class="pure-menu-link" aria-haspopup="true">audit_home</a>
+                        <ul class="pure-menu-children" role="menu" aria-labelledby="menuLink1" aria-hidden="true">
+                            <li class="pure-menu-item"><a href="{% url 'QtCompetence:audit_home' %}" class="pure-menu-link">audit info</a></li>
+                            <li class="pure-menu-item"><a href="{% url 'QtCompetence:audit_all_info_list' %}" class="pure-menu-link">audit query</a></li>
+                        </ul>                   
+                    </li>
+                    {% if real_name %}
+                        <li class="pure-menu-item"><a href="{% url 'QtCompetence:personal_home' %}" style="color: #62a5d3;padding: 8px;text-decoration: none;">Hi,{{ real_name }}</a></li>
+                        <li class="pure-menu-separator" id="loginSeparator"></li>
+                        <li class="pure-menu-item"><a href="{% url 'QtCompetence:logout' %}" class="pure-menu-link ">logout</a></li>
+                    {% else %}
+                        <li class="pure-menu-item"><a href="{% url 'QtCompetence:login_user' %}" id="login_user" class="pure-menu-link ">Log&nbsp;in</a></li>
+                    {% endif %}
+                {% elif is_group_leader %}
+                    <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+                        <a href="{% url 'QtCompetence:competence_judge' %}" id="menuLink1" class="pure-menu-link" aria-haspopup="true">competence</a>
+                        <ul class="pure-menu-children" role="menu" aria-labelledby="menuLink1" aria-hidden="true">
+                            <li class="pure-menu-item" role="presentation"><a href="{% url 'QtCompetence:competence_judge' %}"  class="pure-menu-link" role="menuitem">self-judge</a></li>
+                             <li class="pure-menu-item" role="presentation"><a href="{% url 'QtCompetence:competence_manage' %}"  class="pure-menu-link" role="menuitem">manage</a></li>
+                             <li class="pure-menu-item"><a href="{% url 'QtCompetence:competence_all_info_list' %}" class="pure-menu-link">competence query</a></li>
+                        </ul>
+                    </li>
+                    <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+                        <a href="{% url 'QtCompetence:audit_home' %}" id="menuLink1" class="pure-menu-link" aria-haspopup="true">audit_home</a>
+                        <ul class="pure-menu-children" role="menu" aria-labelledby="menuLink1" aria-hidden="true">
+                            <li class="pure-menu-item"><a href="{% url 'QtCompetence:audit_home' %}" class="pure-menu-link">audit info</a></li>
+                            <li class="pure-menu-item"><a href="{% url 'QtCompetence:audit_analyze' %}" class="pure-menu-link">audit analyze</a></li>
+                            <li class="pure-menu-item"><a href="{% url 'QtCompetence:audit_all_info_list' %}" class="pure-menu-link">audit query</a></li>
+                        </ul>                   
+                    </li>
+                    {% if real_name %}
+                    <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+                        <a href="{% url 'QtCompetence:personal_home' %}" style="color: #62a5d3;padding: 8px;text-decoration: none;">Hi,{{ real_name }}</a>
+                        <ul class="pure-menu-children" role="menu" aria-labelledby="menuLink1" aria-hidden="true">
+                            <li class="pure-menu-item" role="presentation"><a href="{% url 'QtCompetence:staff_home' user_pk %}"  class="pure-menu-link" role="menuitem">self-judge</a></li>
+                             <li class="pure-menu-item" role="presentation"><a href="{% url 'QtCompetence:personal_home' %}"  class="pure-menu-link" role="menuitem">manage</a></li>
+                        </ul>
+                    </li>
+                    <li class="pure-menu-item"></li>
+                        <li class="pure-menu-separator" id="loginSeparator"></li>
+                        <li class="pure-menu-item"><a href="{% url 'QtCompetence:logout' %}" class="pure-menu-link ">logout</a></li>
+                    {% else %}
+                        <li class="pure-menu-item"><a href="{% url 'QtCompetence:login_user' %}" id="login_user" class="pure-menu-link ">Log&nbsp;in</a></li>
+                    {% endif %}
+                {% elif is_manager %}
+                    <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+                        <a href="{% url 'QtCompetence:competence_manage' %}" id="menuLink1" class="pure-menu-link" aria-haspopup="true">competence</a>
+                        <ul class="pure-menu-children" role="menu" aria-labelledby="menuLink1" aria-hidden="true">
+                             <li class="pure-menu-item" role="presentation"><a href="{% url 'QtCompetence:competence_manage' %}"  class="pure-menu-link" role="menuitem">manage</a></li>
+                             <li class="pure-menu-item"><a href="{% url 'QtCompetence:competence_all_info_list' %}" class="pure-menu-link">competence query</a></li>
+                        </ul>
+                    </li>
+                    <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+                        <a href="{% url 'QtCompetence:audit_home' %}" id="menuLink1" class="pure-menu-link" aria-haspopup="true">audit_home</a>
+                        <ul class="pure-menu-children" role="menu" aria-labelledby="menuLink1" aria-hidden="true">
+                            <li class="pure-menu-item"><a href="{% url 'QtCompetence:audit_home' %}" class="pure-menu-link">audit info</a></li>
+                            <li class="pure-menu-item"><a href="{% url 'QtCompetence:audit_analyze' %}" class="pure-menu-link">audit analyze</a></li>
+                            <li class="pure-menu-item"><a href="{% url 'QtCompetence:audit_all_info_list' %}" class="pure-menu-link">audit query</a></li>
+                        </ul>                   
+                    </li>
+                    {% if real_name %}
+                    <li class="pure-menu-item"><a href="{% url 'QtCompetence:personal_home' %}" style="color: #62a5d3;padding: 8px;text-decoration: none;">Hi,{{ real_name }}</a></li>
+                        <li class="pure-menu-separator" id="loginSeparator"></li>
+                        <li class="pure-menu-item"><a href="{% url 'QtCompetence:logout' %}" class="pure-menu-link ">logout</a></li>
+                    {% else %}
+                        <li class="pure-menu-item"><a href="{% url 'QtCompetence:login_user' %}" id="login_user" class="pure-menu-link ">Log&nbsp;in</a></li>
+                    {% endif %}
+                {% elif is_departmentManager %}
+                    <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+                        <a href="{% url 'QtCompetence:competence_analyze' %}" id="menuLink1" class="pure-menu-link" aria-haspopup="true">competence</a>
+                        <ul class="pure-menu-children" role="menu" aria-labelledby="menuLink1" aria-hidden="true">
+                             <li class="pure-menu-item" role="presentation"><a href="{% url 'QtCompetence:competence_analyze' %}"  class="pure-menu-link" role="menuitem">analyze</a></li>
+                             <li class="pure-menu-item"><a href="{% url 'QtCompetence:competence_all_info_list' %}" class="pure-menu-link">competence query</a></li>
+                        </ul>
+                    </li>
+                    <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+                        <a href="{% url 'QtCompetence:audit_home' %}" id="menuLink1" class="pure-menu-link" aria-haspopup="true">audit_home</a>
+                        <ul class="pure-menu-children" role="menu" aria-labelledby="menuLink1" aria-hidden="true">
+                            <li class="pure-menu-item"><a href="{% url 'QtCompetence:audit_home' %}" class="pure-menu-link">audit info</a></li>
+                            <li class="pure-menu-item"><a href="{% url 'QtCompetence:audit_analyze' %}" class="pure-menu-link">audit analyze</a></li>
+                            <li class="pure-menu-item"><a href="{% url 'QtCompetence:audit_all_info_list' %}" class="pure-menu-link">audit query</a></li>
+                        </ul>                   
+                    </li>
+                    {% if real_name %}
+                    <li class="pure-menu-item"><a href="{% url 'QtCompetence:competence_analyze' %}" style="color: #62a5d3;padding: 8px;text-decoration: none;">Hi,{{ real_name }}</a></li>
+                        <li class="pure-menu-separator" id="loginSeparator"></li>
+                        <li class="pure-menu-item"><a href="{% url 'QtCompetence:logout' %}" class="pure-menu-link ">logout</a></li>
+                    {% else %}
+                        <li class="pure-menu-item"><a href="{% url 'QtCompetence:login_user' %}" id="login_user" class="pure-menu-link ">Log&nbsp;in</a></li>
+                    {% endif %}
+                {% elif is_plantManager %}
+                    <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+                        <a href="{% url 'QtCompetence:competence_analyze' %}" id="menuLink1" class="pure-menu-link" aria-haspopup="true">competence</a>
+                        <ul class="pure-menu-children" role="menu" aria-labelledby="menuLink1" aria-hidden="true">
+                            <li class="pure-menu-item" role="presentation"><a href="{% url 'QtCompetence:competence_analyze' %}"  class="pure-menu-link" role="menuitem">analyze</a></li>
+                            <li class="pure-menu-item"><a href="{% url 'QtCompetence:competence_all_info_list' %}" class="pure-menu-link">competence query</a></li>
+                        </ul>
+                    </li>
+                    <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+                        <a href="{% url 'QtCompetence:audit_home' %}" id="menuLink1" class="pure-menu-link" aria-haspopup="true">audit_home</a>
+                        <ul class="pure-menu-children" role="menu" aria-labelledby="menuLink1" aria-hidden="true">
+                            <li class="pure-menu-item"><a href="{% url 'QtCompetence:audit_home' %}" class="pure-menu-link">audit info</a></li>
+                            <li class="pure-menu-item"><a href="{% url 'QtCompetence:audit_analyze' %}" class="pure-menu-link">audit analyze</a></li>
+                            <li class="pure-menu-item"><a href="{% url 'QtCompetence:audit_all_info_list' %}" class="pure-menu-link">audit query</a></li>
+                        </ul>                   
+                    </li>
+                    {% if real_name %}
+                    <li class="pure-menu-item"><a href="{% url 'QtCompetence:competence_analyze' %}" style="color: #62a5d3;padding: 8px;text-decoration: none;">Hi,{{ real_name }}</a></li>
+                        <li class="pure-menu-separator" id="loginSeparator"></li>
+                        <li class="pure-menu-item"><a href="{% url 'QtCompetence:logout' %}" class="pure-menu-link ">logout</a></li>
+                    {% else %}
+                        <li class="pure-menu-item"><a href="{% url 'QtCompetence:login_user' %}" id="login_user" class="pure-menu-link ">Log&nbsp;in</a></li>
+                    {% endif %}
+                {% else %}
+                    <li class="pure-menu-item"><a href="{% url 'QtCompetence:competence_judge' %}" class="pure-menu-link">competence</a></li>
+                    <li class="pure-menu-item"><a href="{% url 'QtCompetence:audit_home' %}" class="pure-menu-link">audit</a></li>
+                    {% if real_name %}
+                        <li class="pure-menu-item"><a href="{% url 'QtCompetence:personal_home' %}" style="color: #62a5d3;padding: 8px;text-decoration: none;">Hi,{{ real_name }}</a></li>
+                        <li class="pure-menu-separator" id="loginSeparator"></li>
+                        <li class="pure-menu-item"><a href="{% url 'QtCompetence:logout' %}" class="pure-menu-link ">logout</a></li>
+                    {% else %}
+                        <li class="pure-menu-item"><a href="{% url 'QtCompetence:login_user' %}" id="login_user" class="pure-menu-link ">Log&nbsp;in</a></li>
+                    {% endif %}
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+{% endblock %}
+{% block footer %}
+    <div class="footer l-box is-center" style="">
+        Copyright 2020 © Vitesco®. All rights reserved
+    </div>
+{% endblock %}
+{% block js %}
+{% endblock %}
+</body>
+</html>

@@ -1,0 +1,75 @@
+{% extends 'QtCompetence/base.html' %}
+{% load static %}
+{% load extra_tags %}
+{% block css %}
+<style>
+    .space {
+        margin: 7% auto;
+        width: 35%;
+    }
+
+    .subBtn {
+        margin: 3% auto;
+        text-align: center;
+    }
+
+    tr {
+        border-bottom: 1px solid #9baff1;
+    }
+
+    #box-table-b {
+        font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+        font-size: 12px;
+        margin: 0 auto;
+        border-collapse: collapse;
+        border-top: 7px solid #9baff1;
+        border-bottom: 7px solid #9baff1;
+    }
+
+    #box-table-b th {
+        font-size: 13px;
+        font-weight: normal;
+        padding: 8px;
+        background: #e8edff;
+        border-right: 1px solid #9baff1;
+        border-left: 1px solid #9baff1;
+        color: #039;
+    }
+
+    #box-table-b td {
+        padding: 8px;
+        background: #e8edff;
+        border-right: 1px solid #aabcfe;
+        border-left: 1px solid #aabcfe;
+        color: #669;
+    }
+
+    a {
+        text-decoration: none;
+    }
+</style>
+{% endblock css %}
+{% block content %}
+<div class="space">
+    <form method="post">
+        {% csrf_token %}
+        {% for rule in competence_rules%}
+            <h4>Competence Rule</h4>
+            <p>{{ rule.competence_name}}</p>
+            <h4>Basic(1分)</h4>
+            <p>{{ rule.basic_content | linebreaks}}</p>
+            <h4>Advanced(2分)</h4>
+            <p>{{ rule.advanced_content | linebreaks}}</p>
+            <h4>Expert(3分)</h4>
+            <p>{{ rule.expert_content | linebreaks}}</p>
+        {% endfor %}
+        {{ form.as_p }}
+        <div style="text-align: center;width: 60%">
+            <button class="pure-button pure-button-primary" style="margin: 1em">完成</button>
+            <input type=button class="pure-button pure-button-primary"
+                onclick="javascript: top.location.href='{% url 'QtCompetence:competence_judge' %}'" value="返回">
+
+        </div>
+    </form>
+</div>
+{% endblock content %}

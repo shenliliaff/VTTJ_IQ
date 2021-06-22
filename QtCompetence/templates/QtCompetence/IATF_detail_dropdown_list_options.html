@@ -1,0 +1,4 @@
+<option value="">---------</option>
+{% for detail in IATF_detail %}
+<option value="{{ detail.pk }}">{{ detail.IATF_detail_title_ch }}{{detail.IATF_detail_content_ch}}</option>
+{% endfor %}

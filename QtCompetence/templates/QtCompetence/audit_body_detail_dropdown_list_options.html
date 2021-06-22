@@ -1,0 +1,4 @@
+<option value="">---------</option>
+{% for detail in audit_body_detail %}
+<option value="{{ detail.pk }}">{{ detail.audit_body_detail_name }}</option>
+{% endfor %}

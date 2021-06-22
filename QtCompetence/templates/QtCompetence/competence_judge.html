@@ -1,0 +1,165 @@
+{% extends 'QtCompetence/base.html' %}
+{% load static %}
+{% load extra_tags %}
+{% block css %}
+<style>
+    .space{
+        margin:4% auto;
+        width: 95%;
+    }
+    .subBtn{
+        margin: 3% auto;
+        text-align: center;
+    }
+    tr{
+        border-bottom: 1px solid #9baff1;
+    }
+    #newspaper-a
+    {
+        font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+        font-size: 12px;
+        margin: 0 auto;
+        text-align: center;
+        border-collapse: collapse;
+        border: 1px solid #69c;
+    }
+    #newspaper-a th
+    {
+        padding: 1% 0;
+        font-weight: normal;
+        font-size: 14px;
+        color: #039;
+        border: 1px dashed #69c;
+    }
+    #newspaper-a td
+    {
+        color: #669;
+        border: 1px dashed #69c;
+        text-align: left;
+    }
+    #newspaper-a tbody tr:hover td
+    {
+        color: #339;
+        background: #d0dafd;
+    }
+    a{
+        text-decoration:none;
+    }
+    p{
+        margin: 0 15px;
+    }
+    $("#newspaper-a").find("td:empty")remove();
+    
+    
+</style>
+{% endblock css %}
+{% block content %}
+<div class="space">
+    {%csrf_token%}
+    <table id="newspaper-a" summary="Competence Evaluation Sheet">
+        <tr>
+            <th scope="col">Competence Name</th>
+            <th scope="col">Group</th>
+            <th scope="col">&nbsp;&nbsp;&nbsp;scope&nbsp;&nbsp;&nbsp;</th>
+            <th scope="col">Basic_level_requirements</th>
+            <th scope="col">Advanced_level_requirements</th>
+            <th scope="col">Expert_level_requirements</th>
+            <!-- <th scope="col">Trainer</th>
+            <th scope="col">training_type</th> -->
+            <th scope="col">reference</th>
+            <th scope="col">&nbsp;&nbsp;&nbsp;score&nbsp;&nbsp;&nbsp;</th>
+        </tr>
+            {% for rule in competence_rules%}
+                <tr>
+                    <td>{{rule.competence_name|linebreaks}}</td>
+                    <td>{{rule.group|competenceListGroup|linebreaks}}</td>
+                    <td>{{rule.scope|competenceListScope|linebreaks}}</td>
+                    <td>{{rule.basic_content|linebreaks}}</td>
+                    <td>{{rule.advanced_content|linebreaks}}</td>
+                    <td>{{rule.expert_content|linebreaks}}</td>
+                    <!-- <td>{{rule.trainer_id|competenceListTrainer}}</td>
+                    <td>{{rule.training_type|competenceListTrainingType}}</td> -->
+                    <td>{{rule.reference|competenceListReference}}</td>
+                    <td id="score{{rule.competence_id}}">
+                        <label for="{{ contentForm.score.id_for_label }}{{rule.competence_id}}">{{ contentForm.score.label }}</label>
+                        {{ contentForm.score }}
+                    </td>
+                </tr>
+            {% endfor %}
+    </table>
+    <div class="subBtn">
+        <button type='submit'  id='subBtnID' class="pure-button pure-button-primary">submit</button>
+    </div>
+</div>
+<div style="margin: 7% auto;font-size: 2.2em;text-align:center;">
+    <p id="result"></p>
+</div>
+{% endblock content %}
+{% block js%}
+<script>
+$(document).ready(function () {
+    var feedbackInfo={{ feedbackInfo | safe }};
+    var rows=feedbackInfo['num_rules'];
+    var id=feedbackInfo['competence_id'];
+    var display=feedbackInfo['display'];
+    var info=feedbackInfo['info'];
+    var self_assessment=feedbackInfo['self_assessment']
+    var score_list="";
+    var URL = document.URL;
+    if(display==0){
+        $('.space').hide();
+        $('#result').html(info);
+    }
+    //设置经理评价为默认员工自评
+    if(self_assessment != undefined){
+        for(var i=0;i<rows;i++){
+            $("#score"+id[i]+"  option[value="+self_assessment[i]+"]").attr("selected", "selected");
+        }
+    }
+    
+    //$("#tableName option[value="+1+"]").attr("selected", "selected");
+    $('#subBtnID').click(function(){
+        for(var i=0;i<rows;i++){
+            var score = $("#score"+id[i]+"").find("option:selected").val();
+            score_list += score +',';
+        }
+        if(score_list.length>0){
+            score_list = score_list.substr(0,score_list.length-1)
+        }
+        if(feedbackInfo['is_staff']==1){
+            $.ajax({
+                url: "{% url 'QtCompetence:competence_judge' %}",
+                type: "POST",
+                data: {
+                    "score_list": score_list,
+                    "csrfmiddlewaretoken": $("[name = 'csrfmiddlewaretoken']").val(),
+                },
+                success: function (result) {
+                    if (result.display == 0) {
+                        $('.space').hide();
+                        $('#result').html(result.info);
+                    }
+                } 
+            })
+        }
+        if(feedbackInfo['is_manager']==1){
+            $.ajax({
+                url: URL,
+                type: "POST",
+                data: {
+                    "score_list": score_list,
+                    "csrfmiddlewaretoken": $("[name = 'csrfmiddlewaretoken']").val(),
+                },
+                success: function (result) {
+                    if (result.display == 0) {
+                        $('.space').hide();
+                        $('#result').html(result.info);
+                    }
+                } 
+            })
+        }
+        score_list="";
+    });
+})
+</script>
+{% endblock js%}

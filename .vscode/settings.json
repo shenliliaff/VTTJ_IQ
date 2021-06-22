@@ -1,0 +1,6 @@
+{
+    "python.linting.pylintArgs": [
+        "--load-plugins"
+    ],
+    "python.pythonPath": "D:\\AF\\08-Django-IQ\\env\\Scripts\\python.exe"
+}

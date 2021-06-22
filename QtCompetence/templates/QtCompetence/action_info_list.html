@@ -1,0 +1,152 @@
+{% extends 'QtCompetence/base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% load extra_tags %}
+{% block css %}
+<style>
+    .content{
+        padding:0;
+        margin:7% auto;
+        width: 90%;
+    }
+    #newspaper-a
+    {
+        font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+        font-size: 12px;
+        text-align: center;
+        border-collapse: collapse;
+        border: 1px solid #69c;
+        width: 100%;
+    }
+    #newspaper-a th
+    {
+        padding:12px;
+        font-weight: normal;
+        font-size: 14px;
+        color: #039;
+        border-bottom: 1px dashed #69c;
+        text-align:center;
+    }
+    #newspaper-a td
+    {
+        padding:12px;
+        color: #669;
+    }
+    #newspaper-a tbody tr:hover td
+    {
+        color: #339;
+        background: #d0dafd;
+    }
+    a{
+        text-decoration:none;
+    }
+    .search{
+        margin-bottom:0.3%;
+        text-align:center;
+    }
+</style>
+<link rel="stylesheet" href="{% static 'QtCompetence/css/bootstrap.min.css'%}">
+{% endblock css %}
+{% block content %}
+<div class='content'>
+    <div class='search'>
+        <form method="get" class="pure-form pure-form-stacked">
+            <div class="pure-g">
+                <div class="pure-u-1-6">     
+                    {{ action_filter.form.user.label_tag }}              
+                </div>  
+                <div class="pure-u-1-6">      
+                    {% render_field action_filter.form.user class="pure-u-23-24" %}        
+                </div>  
+                <div class="pure-u-1-6">     
+                    {{ action_filter.form.finding.label_tag }}                
+                </div>
+                <div class="pure-u-1-6">        
+                    {% render_field action_filter.form.finding class="pure-u-23-24" %}        
+                </div>
+                <div class="pure-u-1-3">     
+                    <button type="submit" class="pure-button pure-button-primary">Search</button>    
+                    <a id="add" href="{% url 'QtCompetence:action_info_create' %}"  class="pure-button" type='button'>增加</a>
+                </div>   
+            </div>
+        </form> 
+    </div>
+    <div class="list">
+        {% if action_info %}
+        <table id="newspaper-a">
+            <thead>
+            <tr>
+                <th>审核信息</th>
+                <th>对应问题</th>
+                <th>负责人</th>
+                <th>纠正截止日期</th>
+                <th>实际纠正日期</th>
+                <th>措施内容</th>
+                <th>创建时间</th>
+                <th>根本原因</th>
+                <th>纠正措施</th>
+                <th>修改</th>
+                {% comment %} <th>删除</th> {% endcomment %}
+            </tr>       
+            </thead>
+            <tBody>
+            {% for action in action_info %}
+                <tr>
+                    <td> {{ action.finding.audit }} </td>
+                    <td> {{ action.finding }} </td>
+                    <td> {{ action.user }} </td>
+                    <td> {{ action.due_date | date:"Y年m月j日" }} </td>
+                    <td> {{ action.actual_date | date:"Y年m月j日" }}</td>
+                    <td> {{ action.action_content }} </td>
+                    <td> {{ finding.rootCause}} </td>
+                    <td> {{ finding.correction }} </td>
+                    <td> {{ action.create_time | date:"Y年m月j日"  }} </td>
+                    <td><a href="{% url 'QtCompetence:action_info_update' action.action_id %}">修改</a></td>
+                    {% comment %} <td><a href="{% url 'QtCompetence:action_info_delete' action.action_id %}">删除</a></td> {% endcomment %}
+                </tr>
+            {% endfor %}
+            </tBody>
+        </table>
+        <nav aria-label="Page navigation" style="text-align:center;">
+            <ul class="pagination">
+                {% if page_obj.has_previous %}
+                    <li><a href="{% url 'QtCompetence:action_info_list' %}?page={{ page_obj.previous_page_number }}&user={{user}}&finding={{finding}}">上一页</a></li>
+                {% else %}
+                    <li class="disabled"><a href="javascript:void(0);">上一页</a></li>
+                {% endif %}
+        
+                {% if left_has_more %}
+                    <li><a href="{% url 'QtCompetence:action_info_list' %}?page=1&user={{user}}&finding={{finding}}">1</a></li>
+                    <li><a href="javascript:void(0);">...</a></li>
+                {% endif %}
+        
+                {# 左边的页码 #}
+                {% for left_page in left_pages %}
+                    <li><a href="{% url 'QtCompetence:action_info_list' %}?page={{ left_page }}&user={{user}}&finding={{finding}}">{{ left_page }}</a></li>
+                {% endfor %}
+                
+                {# 中间的页码 #}
+                <li><a href="{% url 'QtCompetence:action_info_list' %}?page={{ current_page }}&user={{user}}&finding={{finding}}">{{ current_page }}</a></li>
+                {# 右边的页码 #}
+                {% for right_page in right_pages %}
+                    <li><a href="{% url 'QtCompetence:action_info_list' %}?page={{ right_page }}&user={{user}}&finding={{finding}}">{{ right_page }}</a></li>
+                {% endfor %}
+        
+                {% if right_has_more %}
+                    <li><a href="javascript:void(0);">...</a></li>
+                    <li><a href="{% url 'QtCompetence:action_info_list' %}?page={{ paginator.num_pages }}&user={{user}}&finding={{finding}}">{{ paginator.num_pages }}</a></li>
+                {% endif %}
+        
+                {% if page_obj.has_next %}
+                    <li><a href="{% url 'QtCompetence:action_info_list' %}?page={{ page_obj.next_page_number }}&user={{user}}&finding={{finding}}">下一页</a></li>
+                {% else %}
+                    <li class="disabled"><a href="javascript:void(0);">下一页</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% else %}
+        <h3 style="text-align:center;color:red;"><i> No data </i></h3>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

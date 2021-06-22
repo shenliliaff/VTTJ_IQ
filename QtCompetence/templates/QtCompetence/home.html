@@ -1,0 +1,139 @@
+{% extends 'QtCompetence/base.html' %}
+{% load static %}
+{% block js%}
+<script type="text/javascript" src="{% static 'QtCompetence/js/jquery-1.9.1.min.js' %}"></script>
+{% endblock %}
+{% block css%}
+<style>
+    .errorlist {
+            list-style: none;
+            color: #ff0000;
+        }
+</style>
+{% endblock%}
+
+{% block content%}
+<div class="splash-container" style="background-image:url({% static 'QtCompetence/img/bg-home.jpg' %}); background-size:100%;">
+    <div class="splash">
+        <h1 class="splash-head">Vitesco Technologies</h1>
+        <p class="splash-subhead">
+            The Future in Motion.
+        </p>
+        <p>
+            <a href="#" class="pure-button pure-button-primary">Know us</a>
+        </p>
+    </div>
+</div>
+
+<div class="content-wrapper">
+    <div class="content">
+        <h2 class="content-head is-center">Intelligent Quality</h2>
+
+        <div class="pure-g">
+            <div class="l-box pure-u-1 pure-u-md-1-2 pure-u-lg-1-4">
+
+                <h3 class="content-subhead">
+                    <i class="fa fa-rocket"></i>
+                    Quality Competence Evaluation
+                </h3>
+                <p>
+                    Give yourself an objective and fair evaluation.
+                </p>
+            </div>
+            <div class="l-box pure-u-1 pure-u-md-1-2 pure-u-lg-1-4">
+                <h3 class="content-subhead">
+                    <i class="fa fa-mobile"></i>
+                    Quality System Audits
+                </h3>
+                <p>
+                    Audit system issues to fill gaps.
+                </p>
+            </div>
+            <div class="l-box pure-u-1 pure-u-md-1-2 pure-u-lg-1-4">
+                <h3 class="content-subhead">
+                    <i class="fa fa-th-large"></i>
+                    8D
+                </h3>
+                <p>
+                    Phasellus eget enim eu lectus faucibus vestibulum. Suspendisse sodales pellentesque elementum.
+                </p>
+            </div>
+            <div class="l-box pure-u-1 pure-u-md-1-2 pure-u-lg-1-4">
+                <h3 class="content-subhead">
+                    <i class="fa fa-check-square-o"></i>
+                    A3
+                </h3>
+                <p>
+                    Phasellus eget enim eu lectus faucibus vestibulum. Suspendisse sodales pellentesque elementum.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="ribbon l-box-lrg pure-g">
+        <div class="l-box-lrg is-center pure-u-1 pure-u-md-1-2 pure-u-lg-2-5">
+            <img width="300" alt="File Icons" class="pure-img-responsive" src="{% static 'QtCompetence/img/file-icons.png'%}">
+        </div>
+        <div class="pure-u-1 pure-u-md-1-2 pure-u-lg-3-5">
+
+            <h2 class="content-head content-head-ribbon">Intelligent Quality</h2>
+
+            <p>
+                我们致力于打造质量系统流程化、一体化、整合所有工具与方法建立完整的所有质量工具体系结构。<br/>
+                大家的关注是我们持续提升的最大动力，欢迎大家反馈问题。<br/>
+                整合过程的需要大量的调整和优化，我们会认真对待大家的每一条反馈意见，欢迎加入建立质量工具体系的大家庭。
+            </p>
+        </div>
+    </div>
+
+    <div class="content">
+        <h2 class="content-head is-center">Welcome Log in</h2>
+
+        <div class="pure-g">
+            <div class="l-box-lrg pure-u-1 pure-u-md-2-5">
+                <form class="pure-form pure-form-stacked" action="{% url 'QtCompetence:home'%}" method="POST">
+                    <fieldset>
+                        {%csrf_token%}
+                        <div class="pure-control-group">
+                            {% if form.user_name.errors %}
+                                <label for="{{ form.user_name.id_for_label }}">{{ form.user_name.label }}</label>
+                                {{ form.user_name }} <p class="tips">{{ form.user_name.errors }}</p>
+                            {% else %}
+                                <label for="{{ form.user_name.id_for_label }}">{{ form.user_name.label }}</label>
+                                {{ form.user_name }} <p class="tips">{{ form.user_name.help_text }}</p>
+                            {% endif %}
+                        </div>
+                        <div class="pure-control-group">
+                            {% if form.user_pwd.errors %}
+                                <label for="{{ form.user_pwd.id_for_label }}">{{ form.user_pwd.label }}</label>
+                                {{ form.user_pwd }} <p class="tips">{{ form.user_pwd.errors }}</p>
+                            {% else %}
+                                <label for="{{ form.user_pwd.id_for_label }}">{{ form.user_pwd.label }}</label>
+                                {{ form.user_pwd }} <p class="tips">{{ form.user_pwd.help_text }}</p>
+                            {% endif %}
+                        </div>
+                        <button type="submit" class="pure-button">登录</button>
+                    </fieldset>
+                </form>
+            </div>
+
+            <div class="l-box-lrg pure-u-1 pure-u-md-3-5">
+                <h4>Contact Us</h4>
+                <p>
+                    测评流程业务问题请咨询管理员。<br/>
+                    联系人：李佳(QMS)<br/>
+                    邮箱：joanna.li@continental-corporation.com<br/>
+                    电话：+86-22-66212470
+                </p>
+
+                <p style="font-weight:700;">Pay Attention</p>
+                <p>
+                    若遇到系统问题请详细描述发生情景，页面截图等详细信息然后以邮件形式上报。
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

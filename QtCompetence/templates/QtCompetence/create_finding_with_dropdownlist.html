@@ -1,0 +1,104 @@
+{% extends 'QtCompetence/base.html' %}
+{% load static %}
+{% load extra_tags %}
+{% block css %}
+<style>
+    .space {
+        margin: 7% auto;
+        width: 35%;
+    }
+
+    .subBtn {
+        margin: 3% auto;
+        text-align: center;
+    }
+
+    tr {
+        border-bottom: 1px solid #9baff1;
+    }
+
+    #box-table-b {
+        font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+        font-size: 12px;
+        margin: 0 auto;
+        border-collapse: collapse;
+        border-top: 7px solid #9baff1;
+        border-bottom: 7px solid #9baff1;
+    }
+
+    #box-table-b th {
+        font-size: 13px;
+        font-weight: normal;
+        padding: 8px;
+        background: #e8edff;
+        border-right: 1px solid #9baff1;
+        border-left: 1px solid #9baff1;
+        color: #039;
+    }
+
+    #box-table-b td {
+        padding: 8px;
+        background: #e8edff;
+        border-right: 1px solid #aabcfe;
+        border-left: 1px solid #aabcfe;
+        color: #669;
+    }
+
+    a {
+        text-decoration: none;
+    }
+
+    label {
+        vertical-align: top;
+    }
+
+    select{
+        width: 60%;
+    }
+</style>
+{% endblock css %}
+{% block content %}
+<div class="space">
+    <form method="post" id="findingForm" data-IATF_detail-url="{% url 'QtCompetence:ajax_load_IATF_detail' %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div style="text-align: center;width: 60%">
+            <button class="pure-button pure-button-primary" style="margin: 1em">提交</button>
+        </div>
+    </form>
+</div>
+{% endblock content %}
+
+
+{% block js %}
+<!-- XDSoft DateTimePicker -->
+<link rel="stylesheet" href="{% static 'QtCompetence/css/datetimepicker.css'%}" />
+<script src="{% static 'QtCompetence/js/datetimepicker.js'%}"></script>
+<script>
+    $(function () {
+        $("#id_audit_date").datetimepicker({
+            format: 'Y-m-d H:i',
+        });
+        $("#id_due_date").datetimepicker({
+            format: 'Y-m-d H:i',
+        });
+        $("#id_actual_date").datetimepicker({
+            format: 'Y-m-d H:i',
+        });
+        $("#id_IATF").change(function () {
+            var url = $("#findingForm").attr("data-IATF_detail-url");
+            var IATF_Id = $(this).val();
+
+            $.ajax({
+                url: url,
+                data: {
+                    'IATF_Id': IATF_Id
+                },
+                success: function (data) {
+                    $("#id_IATF_detail").html(data);
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

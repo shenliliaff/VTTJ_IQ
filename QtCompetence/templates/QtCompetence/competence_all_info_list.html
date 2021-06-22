@@ -1,0 +1,128 @@
+{% extends 'QtCompetence/base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% load extra_tags %}
+{% block css %}
+<style>
+    .content{
+        padding:0;
+        margin:7% auto;
+        width: 90%;
+        white-space: nowrap;
+    }
+    #newspaper-a
+    {
+        font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+        font-size: 12px;
+        text-align: left;
+        border-collapse: collapse;
+        border: 1px solid #69c;
+        width: 100%;
+    }
+    #newspaper-a th
+    {
+        padding:12px;
+        font-weight: normal;
+        font-size: 14px;
+        color: #039;
+        border-bottom: 1px dashed #69c;
+        text-align:center;
+    }
+    #newspaper-a td
+    {
+        padding:12px;
+        color: #669;
+        width:13.5%;
+        text-align:center;
+    }
+    #newspaper-a tbody tr:hover td
+    {
+        color: #339;
+        background: #d0dafd;
+    }
+    a{
+        text-decoration:none;
+    }
+</style>
+<link rel="stylesheet" href="{% static 'QtCompetence/css/bootstrap.min.css'%}">
+{% endblock css %}
+{% block content %}
+<div class='content'>
+    <div class="list">
+        {% if competence_info %}
+        <a type="button" class="pure-button" href="{% url 'QtCompetence:export_competence_all_info_excel' %}" style="margin: 1%;">Export</a>
+        <table id="newspaper-a">
+            <thead>
+            <tr>
+                <th>能力测评项</th>
+                <th>姓名</th>
+                <th>员工编号</th>
+                <th>职位</th>
+                <th>标准分数</th>
+                <th>自评分数</th>
+                <th>自评差距</th>
+                <th>经理评价分数</th>
+                <th>经理评价差距</th>
+                <th>日期</th>
+            </tr>
+            </thead>
+            <tBody>
+            {% for competence in competence_info %}
+                <tr>
+                    <td> {{ competence.competence_name }}</td>
+                    <td> {{ competence.user_name}}</td>
+                    <td> {{ competence.badge_number }} </td>
+                    <td> {{ competence.position_name }} </td>
+                    <td> {{ competence.standard_score }} </td>
+                    <td> {{ competence.self_assessment }} </td>
+                    <td> {{ competence.self_gap }} </td>
+                    <td> {{ competence.manager_assessment }}</td>
+                    <td> {{ competence.manager_gap }}</td>
+                    <td> {{ competence.time }} </td>
+                </tr>
+            {% endfor %}
+            </tBody>
+        </table>
+        <nav aria-label="Page navigation" style="text-align:center;">
+            <ul class="pagination">
+                {% if page_obj.has_previous %}
+                    <li><a href="{% url 'QtCompetence:competence_all_info_list' %}?page={{ page_obj.previous_page_number }}">上一页</a></li>
+                {% else %}
+                    <li class="disabled"><a href="javascript:void(0);">上一页</a></li>
+                {% endif %}
+        
+                {% if left_has_more %}
+                    <li><a href="{% url 'QtCompetence:competence_all_info_list' %}?page=1">1</a></li>
+                    <li><a href="javascript:void(0);">...</a></li>
+                {% endif %}
+        
+                {# 左边的页码 #}
+                {% for left_page in left_pages %}
+                    <li><a href="{% url 'QtCompetence:competence_all_info_list' %}?page={{ left_page }}">{{ left_page }}</a></li>
+                {% endfor %}
+                
+                {# 中间的页码 #}
+                <li><a href="{% url 'QtCompetence:competence_all_info_list' %}?page={{ current_page }}">{{ current_page }}</a></li>
+                {# 右边的页码 #}
+                {% for right_page in right_pages %}
+                    <li><a href="{% url 'QtCompetence:competence_all_info_list' %}?page={{ right_page }}">{{ right_page }}</a></li>
+                {% endfor %}
+        
+                {% if right_has_more %}
+                    <li><a href="javascript:void(0);">...</a></li>
+                    <li><a href="{% url 'QtCompetence:competence_all_info_list' %}?page={{ paginator.num_pages }}">{{ paginator.num_pages }}</a></li>
+                {% endif %}
+        
+                {% if page_obj.has_next %}
+                    <li><a href="{% url 'QtCompetence:competence_all_info_list' %}?page={{ page_obj.next_page_number }}">下一页</a></li>
+                {% else %}
+                    <li class="disabled"><a href="javascript:void(0);">下一页</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% else %}
+        <h3 style="text-align:center;color:red;"><i> No data </i></h3>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

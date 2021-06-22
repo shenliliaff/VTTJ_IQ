@@ -1,0 +1,179 @@
+{% extends 'QtCompetence/base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% load extra_tags %}
+{% block css %}
+<style>
+    .content{
+        padding:0;
+        margin:7% auto;
+        width: 90%;
+    }
+    #newspaper-a
+    {
+        font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+        font-size: 12px;
+        text-align: center;
+        border-collapse: collapse;
+        border: 1px solid #69c;
+        width: 100%;
+    }
+    #newspaper-a th
+    {
+        padding:12px;
+        font-weight: normal;
+        font-size: 14px;
+        color: #039;
+        border-bottom: 1px dashed #69c;
+        text-align:center;
+    }
+    #newspaper-a td
+    {
+        padding:12px;
+        color: #669;
+    }
+    #newspaper-a tbody tr:hover td
+    {
+        color: #339;
+        background: #d0dafd;
+    }
+    a{
+        text-decoration:none;
+    }
+    .search{
+        margin-bottom:0.3%;
+        text-align:center;
+    }
+</style>
+<link rel="stylesheet" href="{% static 'QtCompetence/css/bootstrap.min.css'%}">
+{% endblock css %}
+{% block content %}
+<div class='content'>
+    <div class='search'>
+        <form method="get" class="pure-form pure-form-stacked">
+            <div class="pure-g">
+                <div class="pure-u-1-6">     
+                    {{ action_filter.form.user.label_tag }}              
+                </div>  
+                <div class="pure-u-1-6">      
+                    {% render_field action_filter.form.user class="pure-u-23-24" %}        
+                </div>  
+                <div class="pure-u-1-6">     
+                    {{ action_filter.form.finding.label_tag }}                
+                </div>
+                <div class="pure-u-1-6">        
+                    {% render_field action_filter.form.finding class="pure-u-23-24" %}        
+                </div>
+                <div class="pure-u-1-3">     
+                    <button type="submit" class="pure-button pure-button-primary">Search</button>    
+                    <a id="add" href="{% url 'QtCompetence:action_info_create' %}"  class="pure-button" type='button'>增加</a>
+                </div>   
+            </div>
+        </form> 
+    </div>
+    <div class="list">
+        {% if action_info %}
+        <table id="newspaper-a">
+            <thead>
+            <tr>
+                <!--审核日期	迎审部门	审核主体	审核类型	审核类型信息	线体/产品	审核负责人/迎审人	
+                    创建日期	问题内容	IATF条款（带描述）	IATF详细条款（带描述）	问题类型	问题责任部门	
+                    创建日期	根本原因	纠正	纠正措施	纠正措施截止日期	实际纠正措施日期-->
+                <th>审核日期</th>
+                <th>迎审部门</th>
+                <th>审核主体</th>
+                <th>审核类型</th>
+                <th>审核类型信息</th>
+                <th>线体/产品</th>
+                <th>审核负责人/迎审人</th>
+                <th>Audit创建日期</th>
+                <th>问题内容</th>
+                <th>IATF条款（带描述）</th>
+                <th>IATF详细条款（带描述）</th>
+                <th>问题类型</th>
+                <th>问题责任部门</th>
+                <th>Finding创建日期</th>
+                <th>根本原因</th>
+                <th>创建时间</th>
+                <th>纠正</th>
+                <th>纠正措施</th>
+                <th>纠正措施截止日期</th>
+                <th>实际纠正措施日期</th>
+                <th>纠正负责人</th>
+                <th>Action创建日期</th>
+            </tr>       
+            </thead>
+            <tBody>
+            {% for action in action_info %}
+                <tr>
+                    <!--审核日期	迎审部门	审核主体	审核类型	审核类型信息	线体/产品	审核负责人/迎审人	
+                    创建日期	问题内容	IATF条款（带描述）	IATF详细条款（带描述）	问题类型	问题责任部门	
+                    创建日期	根本原因	纠正	纠正措施	纠正措施截止日期	实际纠正措施日期-->
+                    <td> {{ action.finding.audit.audit_date}} </td>
+                    <td> {{ action.finding.audit.department}} </td>
+                    <td> {{ action.finding.audit.audit_body}} </td>
+                    <td> {{ action.finding.audit.audit_scope}} </td>
+                    <td> {{ action.finding.audit.audit_type}} </td>
+                    <td> {{ action.finding.audit.line}} </td>
+                    <td> {{ action.finding.audit.user}} </td>
+                    <td> {{ action.finding.audit.create_time}} </td>
+                    <td> {{ action.finding.finding_content}} </td>
+                    <td> {{ action.finding.IATF}} </td>
+                    <td> {{ action.finding.IATF_detail }} </td>
+                    <td> {{ action.finding.weight }} </td>
+                    <td> {{ action.finding.audit_department }} </td>
+                    <td> {{ action.finding.create_time }} </td>
+                    <td> {{ finding.rootCause}} </td>
+                    <td> {{ finding.correction }} </td>
+                    <td> {{ action.action_content }} </td>
+                    <td> {{ action.due_date | date:"Y年m月j日" }} </td>
+                    <td> {{ action.actual_date | date:"Y年m月j日" }}</td>
+                    <td> {{ action.user }} </td>
+                    <td> {{ action.create_time | date:"Y年m月j日"  }} </td>
+                </tr>
+            {% endfor %}
+            </tBody>
+        </table>
+        <nav aria-label="Page navigation" style="text-align:center;">
+            <ul class="pagination">
+                {% if page_obj.has_previous %}
+                    <li><a href="{% url 'QtCompetence:action_info_list' %}?page={{ page_obj.previous_page_number }}&user={{user}}&department={{department}}">上一页</a></li>
+                {% else %}
+                    <li class="disabled"><a href="javascript:void(0);">上一页</a></li>
+                {% endif %}
+        
+                {% if left_has_more %}
+                    <li><a href="{% url 'QtCompetence:action_info_list' %}?page=1&user={{user}}&department={{department}}">1</a></li>
+                    <li><a href="javascript:void(0);">...</a></li>
+                {% endif %}
+        
+                {# 左边的页码 #}
+                {% for left_page in left_pages %}
+                    <li><a href="{% url 'QtCompetence:action_info_list' %}?page={{ left_page }}&user={{user}}&department={{department}}">{{ left_page }}</a></li>
+                {% endfor %}
+                
+                {# 中间的页码 #}
+                <li><a href="{% url 'QtCompetence:action_info_list' %}?page={{ current_page }}&user={{user}}&department={{department}}">{{ current_page }}</a></li>
+                {# 右边的页码 #}
+                {% for right_page in right_pages %}
+                    <li><a href="{% url 'QtCompetence:action_info_list' %}?page={{ right_page }}&user={{user}}&department={{department}}">{{ right_page }}</a></li>
+                {% endfor %}
+        
+                {% if right_has_more %}
+                    <li><a href="javascript:void(0);">...</a></li>
+                    <li><a href="{% url 'QtCompetence:action_info_list' %}?page={{ paginator.num_pages }}&user={{user}}&department={{department}}">{{ paginator.num_pages }}</a></li>
+                {% endif %}
+        
+                {% if page_obj.has_next %}
+                    <li><a href="{% url 'QtCompetence:action_info_list' %}?page={{ page_obj.next_page_number }}&user={{user}}&department={{department}}">下一页</a></li>
+                {% else %}
+                    <li class="disabled"><a href="javascript:void(0);">下一页</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% else %}
+        <h3 style="text-align:center;color:red;"><i> No data </i></h3>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
